@@ -1,96 +1,106 @@
+# Qwen3-4B-Thinking-2507 — Local LLM Setup
 
-# Qwen3-4B-Thinking-2507 with Mozilla llamafile
+Run **Qwen3-4B-Thinking-2507** locally using Mozilla llamafile on macOS, Windows, or Linux.
 
-Run a local AI model on macOS, Windows, or Linux using Mozilla llamafile and a GGUF model stored on your computer or external USB drive.
+**GitHub repository:** https://github.com/kpg-18/local-LLM
 
 ## Features
 
-- Runs locally without sending prompts to a cloud AI service.
-- Supports macOS, Windows, and Linux.
-- Includes one-click launch scripts.
-- Provides a local web interface at `http://127.0.0.1:8080`.
-- Uses a quantized Qwen3-4B-Thinking-2507 model.
+- Run an AI language model locally on your computer.
+- Use a local browser-based interface.
+- Store model files on an external USB drive.
+- Support for macOS, Windows, and Linux with the appropriate llamafile binary.
+- No cloud API key is required for local inference.
 
-## 1. Requirements
+## 1. What is included in this repository?
 
-- A Mac, Windows PC, or Linux computer.
-- An external USB drive or sufficient internal storage.
-- Internet access for the initial downloads.
-- Approximately 3–5 GB or more of free storage for the model and runtime.
-- Additional RAM for inference and the context cache.
+The repository contains the following files:
 
-The Q4_K_M model is approximately 2.5 GB. Actual memory requirements depend on context size and runtime settings.
+| File | Purpose |
+|---|---|
+| `llamafile` | llamafile executable included in the repository |
+| `llamafile-0.10.6-thin` | Additional llamafile executable |
+| `start.command` | Startup script for macOS |
+| `start.txt` | Text instructions or script reference |
 
-## 2. Download llamafile
+**Important:** The repository does not include the Qwen GGUF model. Windows and Linux users must also obtain the appropriate executable for their operating system.
 
-Open the official releases page:
+## 2. What must you download separately?
 
-https://github.com/mozilla-ai/llamafile/releases
+### A. Download the Qwen model
 
-Download a binary appropriate for your operating system.
-
-### macOS
-
-1. Download the macOS-compatible `llamafile-0.10.6-thin` asset.
-2. Rename it to `llamafile`.
-3. Place it in your project folder.
-
-### Linux
-
-1. Download the compatible Linux llamafile binary from the releases page.
-2. Rename it to `llamafile`.
-3. Place it in your project folder.
-
-### Windows
-
-1. Download the Windows executable, such as `llamafile-0.10.6.exe`.
-2. Rename it to `llamafile.exe`.
-3. Place it in your project folder.
-
-Always check the release notes and available assets if the version or filenames have changed.
-
-## 3. Download the Qwen model
-
-Open the model repository:
+Model repository:
 
 https://huggingface.co/QuantFactory/Qwen3-4B-Thinking-2507-GGUF
 
-1. Open the Files and versions section.
-2. Download the Q4_K_M GGUF model file.
-3. Rename the downloaded file to:
+Steps:
 
-   `qwen3-4b-thinking-2507.Q4_K_M.gguf`
+1. Open the link.
+2. Select the file named `Qwen3-4B-Thinking-2507.Q4_K_M.gguf`.
+3. Download the complete file.
+4. Keep the filename consistent with the startup script.
 
-4. Put the model in the same folder as the llamafile executable.
+The model file is approximately 2.7 GB, so ensure you have sufficient free storage.
 
-The final folder should contain both the executable for your operating system and the GGUF model.
+### B. Download llamafile if needed
 
-## 4. Start on macOS or Linux
+Official releases:
 
-Save the following script as `start-mac-linux.sh` in the same folder:
+https://github.com/mozilla-ai/llamafile/releases
+
+Download a binary compatible with your operating system and processor.
+
+- **macOS:** Use a compatible macOS llamafile binary.
+- **Windows:** Download the compatible Windows executable, usually an `.exe` file.
+- **Linux:** Download a compatible Linux binary.
+
+Do not run a Windows executable on macOS or Linux. If you already downloaded the correct executable from this repository, you do not need another copy.
+
+## 3. Recommended folder structure
+
+Keep the executable, model, and startup script together in one folder.
+
+```text
+local-LLM/
+├── llamafile
+├── llamafile-0.10.6-thin
+├── start.command
+├── start.txt
+└── Qwen3-4B-Thinking-2507.Q4_K_M.gguf
+```
+
+Windows users should use `llamafile.exe` instead of the macOS/Linux executable.
+
+You can store this folder on an external USB drive, provided the drive has sufficient free space and the filesystem supports files of this size.
+
+## 4. Run on macOS
+
+1. Download the model file from Hugging Face.
+2. Place it in the same folder as `llamafile` and `start.command`.
+3. Open Terminal.
+4. Navigate to the folder. For an external drive named `KPG`, use:
 
 ```bash
-#!/usr/bin/env bash
-set -e
+cd "/Volumes/KPG"
+```
 
-cd -- "$(dirname -- "$0")"
+5. Make the executable and startup script runnable:
 
-MODEL="qwen3-4b-thinking-2507.Q4_K_M.gguf"
+```bash
+chmod +x llamafile start.command
+```
 
-if [ ! -f "./llamafile" ]; then
-  echo "ERROR: llamafile executable not found."
-  exit 1
-fi
+6. Start the model:
 
-if [ ! -f "$MODEL" ]; then
-  echo "ERROR: Model file not found: $MODEL"
-  exit 1
-fi
+```bash
+./start.command
+```
 
-chmod +x ./llamafile
+If the startup script is not configured correctly, run the command directly:
 
-exec ./llamafile \
-  -m "$MODEL" \
+```bash
+./llamafile \
+  -m "Qwen3-4B-Thinking-2507.Q4_K_M.gguf" \
   --server \
   --host 127.0.0.1 \
   --port 8080 \
@@ -98,153 +108,106 @@ exec ./llamafile \
   -n 2048
 ```
 
-### Run on macOS
+## 5. Run on Windows
 
-Open Terminal and navigate to the folder. For example:
-
-```bash
-cd "/Volumes/KPG"
-chmod +x start-mac-linux.sh
-./start-mac-linux.sh
-```
-
-The `/Volumes/KPG` path is an example for a Mac external drive. Replace it with your actual folder path.
-
-### Run on Linux
-
-Open a terminal in the project folder and run:
-
-```bash
-chmod +x start-mac-linux.sh
-./start-mac-linux.sh
-```
-
-Keep the terminal open while the server is running.
-
-## 5. Start on Windows
-
-Save this script as `start-windows.bat` in the same folder:
+1. Download the Windows-compatible llamafile executable.
+2. Rename it to `llamafile.exe`.
+3. Download the Qwen GGUF model.
+4. Place both files in the same folder.
+5. Open Command Prompt in that folder.
+6. Run:
 
 ```bat
-@echo off
-setlocal
-
-cd /d "%~dp0"
-
-set "MODEL=qwen3-4b-thinking-2507.Q4_K_M.gguf"
-
-if not exist "llamafile.exe" (
-    echo ERROR: llamafile.exe was not found.
-    pause
-    exit /b 1
-)
-
-if not exist "%MODEL%" (
-    echo ERROR: Model file was not found: %MODEL%
-    pause
-    exit /b 1
-)
-
-llamafile.exe ^
-  -m "%MODEL%" ^
-  --server ^
-  --host 127.0.0.1 ^
-  --port 8080 ^
-  -c 8192 ^
-  -n 2048
-
-pause
+llamafile.exe -m "Qwen3-4B-Thinking-2507.Q4_K_M.gguf" --server --host 127.0.0.1 --port 8080 -c 8192 -n 2048
 ```
 
-Double-click `start-windows.bat` to launch the model.
+You can also save the command in a file named `start-windows.bat` and double-click it to launch the model.
 
-Keep the terminal window open while using the server.
+## 6. Run on Linux
 
-## 6. Open the local AI interface
+1. Download the Linux-compatible llamafile binary.
+2. Download the Qwen GGUF model.
+3. Place both files in the same folder.
+4. Open a terminal in that folder.
+5. Make the executable runnable:
 
-After starting the model, wait until the terminal reports that the model is loaded and the server is listening.
+```bash
+chmod +x llamafile
+```
 
-Open your browser and visit:
+6. Start the model:
+
+```bash
+./llamafile \
+  -m "Qwen3-4B-Thinking-2507.Q4_K_M.gguf" \
+  --server \
+  --host 127.0.0.1 \
+  --port 8080 \
+  -c 8192 \
+  -n 2048
+```
+
+## 7. Open the AI interface
+
+After the terminal reports that the server is listening, open your browser and visit:
 
 http://127.0.0.1:8080
 
-If the browser interface does not appear, check the terminal for errors.
+Keep the terminal open while using the model.
 
-## 7. Context and output settings
+## 8. Context and output settings
 
-The launch scripts use these conservative initial settings:
+The commands use these initial settings:
 
-| Setting | Value | Purpose |
-| --- | ---: | --- |
-| Context size | 8192 | Working context for the conversation |
-| Output limit | 2048 | Maximum generated tokens per request |
-| Host | 127.0.0.1 | Local computer only |
-| Port | 8080 | Local server port |
+| Setting | Value | Description |
+|---|---:|---|
+| Context size | 8192 tokens | Conversation working context |
+| Output limit | 2048 tokens | Maximum generated tokens per request |
+| Host | `127.0.0.1` | Accessible from the same computer |
+| Port | `8080` | Local server port |
 
-The context includes the prompt and conversation history, not just the answer. Output tokens are a separate per-response limit.
+If you experience memory problems, reduce the context size to `4096`. Increase it gradually if your computer has enough available RAM.
 
-If your computer has sufficient RAM, you can try a larger context, such as 16384. Increase it gradually and monitor memory usage.
-
-## 8. Stop the server
-
-- macOS/Linux: press `Ctrl+C` in the terminal.
-- Windows: press `Ctrl+C` in the command window and confirm if prompted.
+The context limit and the maximum output length are different settings.
 
 ## 9. Troubleshooting
 
 ### Model file not found
 
-Check that the GGUF filename matches the script exactly. Ensure the file extension is `.gguf`.
+Verify the filename and ensure the GGUF file is in the same directory as the executable.
 
-### Executable not found
+### Permission denied
 
-Make sure the executable is in the same folder as the launch script. Windows needs `llamafile.exe`; macOS and Linux use `llamafile`.
-
-### Permission denied on macOS/Linux
-
-Run:
+On macOS or Linux, run:
 
 ```bash
-chmod +x llamafile start-mac-linux.sh
+chmod +x llamafile start.command
 ```
 
-### Port 8080 is already in use
+### Port already in use
 
-Stop the other server or change `8080` to another available port in both the script and the browser URL.
+Stop the other server or select another available port in the launch command.
 
-### Out of memory or very slow performance
+### Out of memory
 
-Close other applications and lower the context size, for example from `8192` to `4096`.
+Close unnecessary applications and reduce the context size.
 
-### macOS security warning
+### Windows executable does not run
 
-Only run a binary downloaded from the official project release page. Review macOS security warnings rather than bypassing them blindly.
+Ensure you downloaded the Windows-compatible binary from the official llamafile releases page.
 
 ## 10. Security and privacy
 
-The default configuration binds to `127.0.0.1`, which keeps the server accessible only from the same computer.
+The default configuration binds to `127.0.0.1`, making the server accessible only from the local computer.
 
-Do not expose the server directly to your local network or the public internet without configuring appropriate access controls.
-
-## 11. GitHub repository hygiene
-
-Do not commit large model files or platform executables. Add a `.gitignore` file:
-
-```gitignore
-*.gguf
-llamafile
-llamafile.exe
-.DS_Store
-Thumbs.db
-```
+Do not expose the server to a public network without appropriate access controls.
 
 ## References
 
-- Mozilla llamafile releases:
-  https://github.com/mozilla-ai/llamafile/releases
-- Qwen3-4B-Thinking-2507 GGUF model:
-  https://huggingface.co/QuantFactory/Qwen3-4B-Thinking-2507-GGUF
-- Mozilla llamafile documentation:
-  https://github.com/mozilla-ai/llamafile
+- GitHub repository: https://github.com/kpg-18/local-LLM
+- Mozilla llamafile releases: https://github.com/mozilla-ai/llamafile/releases
+- Qwen3-4B-Thinking-2507 GGUF model: https://huggingface.co/QuantFactory/Qwen3-4B-Thinking-2507-GGUF
 
 ---
+
+**Contributions are welcome!** Feel free to report issues or suggest improvements for running local language models across operating systems.
